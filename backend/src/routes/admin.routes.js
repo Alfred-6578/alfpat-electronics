@@ -1,7 +1,25 @@
 import { Router } from "express";
+import { protect, adminOnly } from "../middleware/authMiddleware.js";
+import {
+  getDashboardStats,
+  getAdminProducts,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getAdminOrders,
+  updateOrderStatus,
+} from "../controllers/adminController.js";
 
 const router = Router();
 
-// TODO: Add admin routes
+router.use(protect, adminOnly);
+
+router.get("/dashboard", getDashboardStats);
+router.get("/products", getAdminProducts);
+router.post("/products", createProduct);
+router.put("/products/:id", updateProduct);
+router.delete("/products/:id", deleteProduct);
+router.get("/orders", getAdminOrders);
+router.put("/orders/:id", updateOrderStatus);
 
 export default router;
