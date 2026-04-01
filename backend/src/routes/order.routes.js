@@ -3,6 +3,7 @@ import { protect } from "../middleware/authMiddleware.js";
 import {
   createOrder,
   verifyPayment,
+  paystackWebhook,
   getMyOrders,
   getOrderById,
 } from "../controllers/orderController.js";
@@ -11,6 +12,7 @@ const router = Router();
 
 router.post("/", protect, createOrder);
 router.post("/verify", verifyPayment);
+router.post("/webhook", paystackWebhook);
 router.get("/my", protect, getMyOrders);
 router.get("/:id", protect, getOrderById);
 

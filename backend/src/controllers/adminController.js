@@ -129,6 +129,15 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
     throw new Error("Order not found");
   }
 
+  // Restore stock when cancelling an order
+  if (orderStatus === "cancelled" && order.orderStatus !== "cancelled") {
+    for (const item of order.items) {
+      await Product.findByIdAndUpdate(item.product, {
+        $inc: { stock: item.qty },
+      });
+    }
+  }
+
   order.orderStatus = orderStatus;
   const updated = await order.save();
   res.json(updated);

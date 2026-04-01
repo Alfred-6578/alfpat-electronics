@@ -13,6 +13,9 @@ const userSchema = new mongoose.Schema({
     state: String,
   },
   role: { type: String, enum: ["user", "admin"], default: "user" },
+  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import asyncHandler from "express-async-handler";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
@@ -56,6 +57,13 @@ export const createOrder = asyncHandler(async (req, res) => {
     totalAmount += price * item.qty;
   }
 
+  // Reduce stock for each item
+  for (const item of orderItems) {
+    await Product.findByIdAndUpdate(item.product, {
+      $inc: { stock: -item.qty },
+    });
+  }
+
   const paymentReference =
     "ALFPAT-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9).toUpperCase();
 
@@ -96,11 +104,49 @@ export const verifyPayment = asyncHandler(async (req, res) => {
 
   const result = await verifyPaystack(reference);
 
-  order.paymentStatus = result.success ? "paid" : "failed";
-  await order.save();
+  if (result.success) {
+    order.paymentStatus = "paid";
+  } else {
+    order.paymentStatus = "failed";
+    // Restore stock on failed payment
+    for (const item of order.items) {
+      await Product.findByIdAndUpdate(item.product, {
+        $inc: { stock: item.qty },
+      });
+    }
+  }
 
+  await order.save();
   res.json(order);
 });
+
+// @desc    Paystack webhook handler
+// @route   POST /api/orders/webhook
+export const paystackWebhook = async (req, res) => {
+  const hash = crypto
+    .createHmac("sha512", process.env.PAYSTACK_SECRET_KEY)
+    .update(JSON.stringify(req.body))
+    .digest("hex");
+
+  if (hash !== req.headers["x-paystack-signature"]) {
+    return res.status(401).send("Invalid signature");
+  }
+
+  const { event, data } = req.body;
+
+  if (event === "charge.success") {
+    const order = await Order.findOne({ paymentReference: data.reference });
+
+    if (order && order.paymentStatus !== "paid") {
+      order.paymentStatus = "paid";
+      await order.save();
+      console.log(`Webhook: Order ${data.reference} marked as paid`);
+    }
+  }
+
+  // Always respond 200 so Paystack doesn't retry
+  res.sendStatus(200);
+};
 
 // @desc    Get logged-in user's orders
 // @route   GET /api/orders/my
