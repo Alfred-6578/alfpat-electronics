@@ -16,6 +16,7 @@ import orderRoutes from "./src/routes/order.routes.js";
 import adminRoutes from "./src/routes/admin.routes.js";
 import categoryRoutes from "./src/routes/category.routes.js";
 import uploadRoutes from "./src/routes/upload.routes.js";
+import paymentRoutes from "./src/routes/payment.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -27,6 +28,10 @@ connectDB();
 app.use(helmet());
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
+
+// Webhook needs raw body for signature verification — must come BEFORE express.json()
+app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
@@ -53,6 +58,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/payments", paymentRoutes);
 
 // Global error handler
 app.use(errorMiddleware);

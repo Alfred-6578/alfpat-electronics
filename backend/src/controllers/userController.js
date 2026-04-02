@@ -180,3 +180,116 @@ export const getWishlist = asyncHandler(async (req, res) => {
 
   res.json(user.wishlist);
 });
+
+// @desc    Get saved addresses
+// @route   GET /api/users/addresses
+export const getAddresses = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select("savedAddresses");
+  res.json(user.savedAddresses);
+});
+
+// @desc    Add a new address
+// @route   POST /api/users/addresses
+export const addAddress = asyncHandler(async (req, res) => {
+  const { label, fullName, phone, street, city, state, isDefault } = req.body;
+
+  if (!fullName || !phone || !street || !city || !state) {
+    res.status(400);
+    throw new Error("All address fields are required");
+  }
+
+  const user = await User.findById(req.user._id);
+
+  // Check for duplicate address
+  const duplicate = user.savedAddresses.find(
+    (addr) =>
+      addr.fullName.toLowerCase() === fullName.toLowerCase() &&
+      addr.phone === phone &&
+      addr.street.toLowerCase() === street.toLowerCase() &&
+      addr.city.toLowerCase() === city.toLowerCase() &&
+      addr.state.toLowerCase() === state.toLowerCase()
+  );
+
+  if (duplicate) {
+    // Not an error — just return existing addresses silently
+    return res.json(user.savedAddresses);
+  }
+
+  // If this is set as default, unset all others
+  if (isDefault) {
+    user.savedAddresses.forEach((addr) => {
+      addr.isDefault = false;
+    });
+  }
+
+  // If first address, make it default
+  const makeDefault = user.savedAddresses.length === 0 ? true : !!isDefault;
+
+  user.savedAddresses.push({
+    label: label || "Home",
+    fullName,
+    phone,
+    street,
+    city,
+    state,
+    isDefault: makeDefault,
+  });
+
+  await user.save();
+  res.status(201).json(user.savedAddresses);
+});
+
+// @desc    Update an address
+// @route   PUT /api/users/addresses/:addressId
+export const updateAddress = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const address = user.savedAddresses.id(req.params.addressId);
+
+  if (!address) {
+    res.status(404);
+    throw new Error("Address not found");
+  }
+
+  const { label, fullName, phone, street, city, state, isDefault } = req.body;
+
+  if (isDefault) {
+    user.savedAddresses.forEach((addr) => {
+      addr.isDefault = false;
+    });
+  }
+
+  if (label !== undefined) address.label = label;
+  if (fullName !== undefined) address.fullName = fullName;
+  if (phone !== undefined) address.phone = phone;
+  if (street !== undefined) address.street = street;
+  if (city !== undefined) address.city = city;
+  if (state !== undefined) address.state = state;
+  if (isDefault !== undefined) address.isDefault = isDefault;
+
+  await user.save();
+  res.json(user.savedAddresses);
+});
+
+// @desc    Delete an address
+// @route   DELETE /api/users/addresses/:addressId
+export const deleteAddress = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(req.user._id, {
+    $pull: { savedAddresses: { _id: req.params.addressId } },
+  });
+
+  const user = await User.findById(req.user._id).select("savedAddresses");
+  res.json(user.savedAddresses);
+});
+
+// @desc    Set an address as default
+// @route   PUT /api/users/addresses/:addressId/default
+export const setDefaultAddress = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  user.savedAddresses.forEach((addr) => {
+    addr.isDefault = addr._id.toString() === req.params.addressId;
+  });
+
+  await user.save();
+  res.json(user.savedAddresses);
+});

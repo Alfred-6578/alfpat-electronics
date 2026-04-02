@@ -7,11 +7,17 @@ const headers = () => ({
   "Content-Type": "application/json",
 });
 
-export const initializePayment = async ({ email, amount, reference, metadata }) => {
+export const initializePayment = async ({ email, amount, reference, callbackUrl, metadata }) => {
   try {
     const { data } = await axios.post(
       `${PAYSTACK_BASE}/transaction/initialize`,
-      { email, amount: amount * 100, reference, metadata },
+      {
+        email,
+        amount: amount * 100,
+        reference,
+        callback_url: callbackUrl,
+        metadata: metadata || {},
+      },
       { headers: headers() }
     );
 
@@ -19,12 +25,13 @@ export const initializePayment = async ({ email, amount, reference, metadata }) 
       return {
         authorizationUrl: data.data.authorization_url,
         reference: data.data.reference,
+        accessCode: data.data.access_code,
       };
     }
 
-    throw new Error("Paystack initialization failed");
+    throw new Error("Payment initialization failed");
   } catch (error) {
-    throw new Error(error.response?.data?.message || "Paystack initialization failed");
+    throw new Error("Payment initialization failed: " + (error.response?.data?.message || error.message));
   }
 };
 
@@ -35,12 +42,20 @@ export const verifyPayment = async (reference) => {
       { headers: headers() }
     );
 
-    if (data.status && data.data.status === "success") {
-      return { success: true, data: data.data };
+    if (data.status) {
+      return {
+        success: data.data.status === "success",
+        status: data.data.status,
+        amount: data.data.amount / 100,
+        reference: data.data.reference,
+        email: data.data.customer.email,
+        paidAt: data.data.paid_at,
+        data: data.data,
+      };
     }
 
-    return { success: false, data: data.data };
+    throw new Error("Payment verification failed");
   } catch (error) {
-    throw new Error(error.response?.data?.message || "Payment verification failed");
+    throw new Error("Payment verification failed: " + (error.response?.data?.message || error.message));
   }
 };

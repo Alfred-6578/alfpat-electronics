@@ -33,6 +33,17 @@ export interface CartItem {
   qty: number;
 }
 
+export interface SavedAddress {
+  _id: string;
+  label: string;
+  fullName: string;
+  phone: string;
+  street: string;
+  city: string;
+  state: string;
+  isDefault: boolean;
+}
+
 export interface User {
   _id: string;
   name: string;
@@ -40,6 +51,7 @@ export interface User {
   role: "user" | "admin";
   phone?: string;
   address?: Address;
+  savedAddresses?: SavedAddress[];
   token?: string;
 }
 
@@ -90,6 +102,74 @@ export interface ProductFilters {
   category: string;
   sort: SortOption;
   page: number;
+}
+
+export interface CheckoutFormData {
+  fullName: string;
+  phone: string;
+  email: string;
+  street: string;
+  city: string;
+  state: string;
+  note: string;
+}
+
+export interface CheckoutFormErrors {
+  fullName?: string;
+  phone?: string;
+  street?: string;
+  city?: string;
+  state?: string;
+}
+
+export interface CreateOrderPayload {
+  items: { product: string; qty: number }[];
+  shippingAddress: {
+    fullName: string;
+    phone: string;
+    email: string;
+    street: string;
+    city: string;
+    state: string;
+  };
+}
+
+export interface CreateOrderResponse {
+  order: Order;
+  paymentUrl: string;
+}
+
+export interface InitializePaymentPayload {
+  items: { _id: string; qty: number }[];
+  shippingAddress: {
+    fullName: string;
+    phone: string;
+    street: string;
+    city: string;
+    state: string;
+  };
+}
+
+export interface InitializePaymentResponse {
+  paymentUrl: string;
+  reference: string;
+}
+
+export type VerifyStatus =
+  | "paid"
+  | "failed"
+  | "pending"
+  | "processing"
+  | "not_initialized"
+  | "creating"
+  | "unknown";
+
+export interface PaymentStatusResponse {
+  found: boolean;
+  status?: VerifyStatus;
+  order?: Order;
+  message?: string;
+  error?: string;
 }
 
 export interface DashboardStats {

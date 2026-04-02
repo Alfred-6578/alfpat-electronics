@@ -79,10 +79,13 @@ export const createOrder = asyncHandler(async (req, res) => {
 
   const email = req.user.email;
 
+  const callbackUrl = `${process.env.CLIENT_URL}/orders/${order._id}`;
+
   const { authorizationUrl } = await initializePayment({
     email,
     amount: totalAmount,
     reference: paymentReference,
+    callbackUrl,
   });
 
   await sendOrderNotification(order);

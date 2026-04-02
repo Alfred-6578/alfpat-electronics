@@ -76,7 +76,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* ── Info area ── pointer-events-none so clicks go to the link */}
-      <div className="flex flex-col flex-1 px-4 py-3.5 pt-1 pointer-events-none justify-between">
+      <div className="flex flex-col flex-1 p-2.5 tny:p-4 py-3.5 pt-1 pointer-events-none justify-between">
         <div className="">
           <h3 className="text font-semibold text-primary leading-snug truncate">
             {name}

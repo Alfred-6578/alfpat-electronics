@@ -12,6 +12,17 @@ const userSchema = new mongoose.Schema({
     city: String,
     state: String,
   },
+  savedAddresses: [
+    {
+      label: { type: String, default: "Home" },
+      fullName: { type: String, required: true },
+      phone: { type: String, required: true },
+      street: { type: String, required: true },
+      city: { type: String, required: true },
+      state: { type: String, required: true },
+      isDefault: { type: Boolean, default: false },
+    },
+  ],
   role: { type: String, enum: ["user", "admin"], default: "user" },
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   resetPasswordToken: { type: String },

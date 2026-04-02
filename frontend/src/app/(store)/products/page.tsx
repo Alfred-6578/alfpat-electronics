@@ -116,8 +116,8 @@ export default function ProductsPage() {
           </li>
           {categories.length === 0
             ? Array.from({ length: 5 }).map((_, i) => (
-                <li key={i} className="animate-pulse">
-                  <div className="h-9 bg-gray-100 rounded-lg" />
+                <li key={i} className="animate-pulse mt-2">
+                  <div className="h-7 bg-gray-100 rounded-lg" />
                 </li>
               ))
             : categories.map((cat) => (
