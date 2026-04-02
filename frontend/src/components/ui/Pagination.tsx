@@ -1,10 +1,16 @@
 "use client";
 
-export default function Pagination({ currentPage, totalPages, onPageChange }) {
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   if (totalPages <= 1) return null;
 
-  const getPages = () => {
-    const pages = [];
+  const getPages = (): (number | string)[] => {
+    const pages: (number | string)[] = [];
     const maxVisible = 5;
 
     if (totalPages <= maxVisible) {
@@ -58,7 +64,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         ) : (
           <button
             key={page}
-            onClick={() => onPageChange(page)}
+            onClick={() => onPageChange(page as number)}
             className={`w-9 h-9 flex items-center justify-center text-sm font-medium rounded transition-colors ${
               currentPage === page
                 ? "bg-[#F97316] text-white"

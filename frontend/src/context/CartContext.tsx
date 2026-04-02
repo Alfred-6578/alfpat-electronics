@@ -1,33 +1,81 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useMemo } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  type ReactNode,
+} from "react";
 import toast from "react-hot-toast";
+import type { CartItem, Product } from "@/lib/types";
 
-const CartContext = createContext(null);
+interface CartContextType {
+  items: CartItem[];
+  addToCart: (product: Product, quantity?: number) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, newQty: number) => void;
+  clearCart: () => void;
+  cartCount: number;
+  cartTotal: number;
+}
 
-export function CartProvider({ children }) {
-  const [items, setItems] = useState([]);
-  const [loaded, setLoaded] = useState(false);
+const STORAGE_KEY = "alfpat_cart";
 
-  // Load from localStorage on mount
+const CartContext = createContext<CartContextType | null>(null);
+
+function readCart(): CartItem[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeCart(items: CartItem[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+
+export function CartProvider({ children }: { children: ReactNode }) {
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [hydrated, setHydrated] = useState(false);
+
+  // Hydrate from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem("alfpat_cart");
-    if (stored) {
-      try {
-        setItems(JSON.parse(stored));
-      } catch {}
-    }
-    setLoaded(true);
+    setItems(readCart());
+    setHydrated(true);
   }, []);
 
-  // Persist to localStorage on every change
+  // Re-sync when user navigates back (page becomes visible again)
   useEffect(() => {
-    if (loaded) {
-      localStorage.setItem("alfpat_cart", JSON.stringify(items));
-    }
-  }, [items, loaded]);
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        setItems(readCart());
+      }
+    };
+    const handleFocus = () => setItems(readCart());
 
-  const addToCart = (product, quantity = 1) => {
+    window.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("pageshow", handleFocus);
+    return () => {
+      window.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("pageshow", handleFocus);
+    };
+  }, []);
+
+  // Persist to localStorage on change (only after hydration)
+  useEffect(() => {
+    if (hydrated) {
+      writeCart(items);
+    }
+  }, [items, hydrated]);
+
+  const addToCart = useCallback((product: Product, quantity = 1) => {
     setItems((prev) => {
       const existing = prev.find((item) => item._id === product._id);
       if (existing) {
@@ -43,23 +91,23 @@ export function CartProvider({ children }) {
           _id: product._id,
           name: product.name,
           price: product.price,
-          discountPrice: product.discountPrice || null,
-          image: product.images?.[0] || product.image || "",
+          discountPrice: product.discountPrice ?? null,
+          image: product.images?.[0] ?? "",
           stock: product.stock,
           qty: quantity,
         },
       ];
     });
     toast.success("Added to cart!");
-  };
+  }, []);
 
-  const removeFromCart = (productId) => {
+  const removeFromCart = useCallback((productId: string) => {
     setItems((prev) => prev.filter((item) => item._id !== productId));
-  };
+  }, []);
 
-  const updateQuantity = (productId, newQty) => {
+  const updateQuantity = useCallback((productId: string, newQty: number) => {
     if (newQty <= 0) {
-      removeFromCart(productId);
+      setItems((prev) => prev.filter((item) => item._id !== productId));
       return;
     }
     setItems((prev) =>
@@ -69,12 +117,12 @@ export function CartProvider({ children }) {
           : item
       )
     );
-  };
+  }, []);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setItems([]);
-    localStorage.removeItem("alfpat_cart");
-  };
+    localStorage.removeItem(STORAGE_KEY);
+  }, []);
 
   const cartCount = useMemo(
     () => items.reduce((sum, item) => sum + item.qty, 0),
@@ -84,7 +132,7 @@ export function CartProvider({ children }) {
   const cartTotal = useMemo(
     () =>
       items.reduce(
-        (sum, item) => sum + (item.discountPrice || item.price) * item.qty,
+        (sum, item) => sum + (item.discountPrice ?? item.price) * item.qty,
         0
       ),
     [items]
@@ -107,7 +155,7 @@ export function CartProvider({ children }) {
   );
 }
 
-export function useCart() {
+export function useCart(): CartContextType {
   const context = useContext(CartContext);
   if (!context) {
     throw new Error("useCart must be used within a CartProvider");

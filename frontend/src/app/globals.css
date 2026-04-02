@@ -9,8 +9,16 @@
 @theme inline {
   --color-background: #ffffff;
   --color-foreground: #0B1B3A;
+  --color-primary: #0B1B3A;
+  --color-accent: #F97316;
+  --color-secondary-bg: #F3F4F6;
+  --color-accent-hover: #EA6A0A;
   --font-sans: var(--font-outfit);
   --font-heading: var(--font-playfair);
+  
+  --breakpoint-vsm: 550px;
+  --breakpoint-tny: 450px;
+  --breakpoint-xsm: 385px;
 }
 
 *,
@@ -52,4 +60,13 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

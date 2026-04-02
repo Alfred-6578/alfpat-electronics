@@ -6,7 +6,7 @@ import paginate from "../utils/paginate.js";
 // @desc    Get all active products (with filtering, search, sort, pagination)
 // @route   GET /api/products
 export const getAllProducts = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 12, category, search, sort, brand } = req.query;
+  const { page = 1, limit = 12, category, search, sort, brand, featured } = req.query;
 
   const filter = { isActive: true };
 
@@ -17,6 +17,10 @@ export const getAllProducts = asyncHandler(async (req, res) => {
 
   if (search) {
     filter.name = { $regex: search, $options: "i" };
+  }
+
+  if (featured === "true") {
+    filter.isFeatured = true;
   }
 
   if (brand) {

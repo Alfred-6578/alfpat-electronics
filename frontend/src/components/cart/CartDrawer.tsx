@@ -7,7 +7,12 @@ import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { formatNaira } from "@/lib/formatCurrency";
 
-export default function CartDrawer({ isOpen, onClose }) {
+interface CartDrawerProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { items, removeFromCart, updateQuantity, cartTotal, cartCount } = useCart();
   const { user } = useAuth();
   const router = useRouter();
@@ -78,7 +83,6 @@ export default function CartDrawer({ isOpen, onClose }) {
           {/* Body */}
           <div className="flex-1 overflow-y-auto">
             {items.length === 0 ? (
-              /* Empty state */
               <div className="flex flex-col items-center justify-center h-full px-6 text-center">
                 <svg className="w-24 h-24 text-gray-200 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -98,14 +102,12 @@ export default function CartDrawer({ isOpen, onClose }) {
                 </Link>
               </div>
             ) : (
-              /* Items list */
               <div className="px-6 py-4">
                 {items.map((item) => (
                   <div
                     key={item._id}
                     className="flex gap-4 py-4 border-b border-gray-50 last:border-b-0"
                   >
-                    {/* Image */}
                     {item.image ? (
                       <img
                         src={item.image}
@@ -120,16 +122,14 @@ export default function CartDrawer({ isOpen, onClose }) {
                       </div>
                     )}
 
-                    {/* Details */}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-[#0B1B3A] line-clamp-2 leading-snug">
                         {item.name}
                       </p>
 
-                      {/* Price */}
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-sm font-bold text-[#F97316]">
-                          {formatNaira(item.discountPrice || item.price)}
+                          {formatNaira(item.discountPrice ?? item.price)}
                         </span>
                         {item.discountPrice && (
                           <span className="text-xs text-gray-400 line-through">
@@ -138,7 +138,6 @@ export default function CartDrawer({ isOpen, onClose }) {
                         )}
                       </div>
 
-                      {/* Qty controls */}
                       <div className="flex items-center justify-between mt-2.5">
                         <div className="flex items-center gap-2">
                           <button
@@ -163,7 +162,6 @@ export default function CartDrawer({ isOpen, onClose }) {
                           </button>
                         </div>
 
-                        {/* Delete */}
                         <button
                           onClick={() => removeFromCart(item._id)}
                           className="p-1 text-gray-300 hover:text-red-500 transition-colors"

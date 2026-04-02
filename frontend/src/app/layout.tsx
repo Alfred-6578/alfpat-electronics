@@ -22,7 +22,7 @@ export const metadata = {
     "Shop the best TVs, Washing Machines, Refrigerators, Fans and more in Nigeria",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${outfit.variable} ${playfair.variable}`}>
       <body className={`${outfit.className} min-h-screen flex flex-col antialiased`}>

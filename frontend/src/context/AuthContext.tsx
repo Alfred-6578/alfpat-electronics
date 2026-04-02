@@ -1,13 +1,32 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import Cookies from "js-cookie";
 import api from "@/lib/api";
+import type { User } from "@/lib/types";
 
-const AuthContext = createContext(null);
+interface AuthContextType {
+  user: User | null;
+  setUser: Dispatch<SetStateAction<User | null>>;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<User>;
+  register: (name: string, email: string, password: string) => Promise<User>;
+  loginWithGoogle: () => void;
+  logout: () => void;
+}
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,14 +45,14 @@ export function AuthProvider({ children }) {
     loadUser();
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email: string, password: string): Promise<User> => {
     const { data } = await api.post("/auth/login", { email, password });
     Cookies.set("alfpat_token", data.token, { expires: 7 });
     setUser(data);
     return data;
   };
 
-  const register = async (name, email, password) => {
+  const register = async (name: string, email: string, password: string): Promise<User> => {
     const { data } = await api.post("/auth/register", { name, email, password });
     Cookies.set("alfpat_token", data.token, { expires: 7 });
     setUser(data);
@@ -41,8 +60,8 @@ export function AuthProvider({ children }) {
   };
 
   const loginWithGoogle = () => {
-    window.location.href =
-      process.env.NEXT_PUBLIC_API_URL.replace("/api", "") + "/api/auth/google";
+    const base = (process.env.NEXT_PUBLIC_API_URL ?? "").replace("/api", "");
+    window.location.href = base + "/api/auth/google";
   };
 
   const logout = () => {
@@ -59,7 +78,7 @@ export function AuthProvider({ children }) {
   );
 }
 
-export function useAuth() {
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");

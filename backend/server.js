@@ -4,7 +4,6 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
-import mongoSanitize from "express-mongo-sanitize";
 import connectDB from "./src/config/db.js";
 import errorMiddleware from "./src/middleware/errorMiddleware.js";
 import passport from "./src/config/passport.js";
@@ -30,7 +29,6 @@ app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(mongoSanitize());
 app.use(passport.initialize());
 
 // Rate limiting for auth routes

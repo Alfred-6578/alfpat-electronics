@@ -1,0 +1,101 @@
+export interface Product {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  price: number;
+  discountPrice?: number;
+  images: string[];
+  category: Category | string;
+  brand?: string;
+  stock: number;
+  specs?: { key: string; value: string }[];
+  isFeatured: boolean;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface Category {
+  _id: string;
+  name: string;
+  slug: string;
+  image?: string;
+  description?: string;
+}
+
+export interface CartItem {
+  _id: string;
+  name: string;
+  price: number;
+  discountPrice: number | null;
+  image: string;
+  stock: number;
+  qty: number;
+}
+
+export interface User {
+  _id: string;
+  name: string;
+  email: string;
+  role: "user" | "admin";
+  phone?: string;
+  address?: Address;
+  token?: string;
+}
+
+export interface Address {
+  street: string;
+  city: string;
+  state: string;
+}
+
+export interface ShippingAddress extends Address {
+  fullName: string;
+  phone: string;
+  email?: string;
+}
+
+export interface OrderItem {
+  product: string | Product;
+  name: string;
+  image: string;
+  qty: number;
+  price: number;
+}
+
+export interface Order {
+  _id: string;
+  user?: string | User;
+  items: OrderItem[];
+  shippingAddress: ShippingAddress;
+  totalAmount: number;
+  paymentReference: string;
+  paymentStatus: "pending" | "paid" | "failed";
+  orderStatus: "processing" | "shipped" | "delivered" | "cancelled";
+  whatsappNotified: boolean;
+  createdAt: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+}
+
+export type SortOption = "newest" | "price_asc" | "price_desc";
+
+export interface ProductFilters {
+  search: string;
+  category: string;
+  sort: SortOption;
+  page: number;
+}
+
+export interface DashboardStats {
+  totalProducts: number;
+  totalOrders: number;
+  totalRevenue: number;
+  pendingOrders: number;
+  recentOrders: Order[];
+}
