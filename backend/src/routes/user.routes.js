@@ -4,8 +4,6 @@ import {
   getProfile,
   updateProfile,
   changePassword,
-  forgotPassword,
-  resetPassword,
   addToWishlist,
   removeFromWishlist,
   getWishlist,
@@ -17,10 +15,6 @@ import {
 } from "../controllers/userController.js";
 
 const router = Router();
-
-// Public
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password/:token", resetPassword);
 
 // Protected
 router.get("/profile", protect, getProfile);
