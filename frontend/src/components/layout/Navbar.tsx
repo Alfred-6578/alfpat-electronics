@@ -162,7 +162,7 @@ export default function Navbar() {
                       </Link>
                       {user.role === "admin" && (
                         <Link
-                          href="/admin"
+                          href="/mngmt-x7k9q2"
                           onClick={() => setIsDropdownOpen(false)}
                           className="block px-4 py-2 text-sm text-[#0B1B3A] hover:bg-[#F8F9FA] transition-colors"
                         >

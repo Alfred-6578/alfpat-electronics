@@ -23,7 +23,7 @@ export default function ProductDetails({
   const { items, addToCart, updateQuantity } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [qty, setQty] = useState(1);
-  const [specsOpen, setSpecsOpen] = useState(false);
+  const [specsOpen, setSpecsOpen] = useState(true);
 
   const cartItem = items.find((i) => i._id === product._id);
   const outOfStock = product.stock === 0;

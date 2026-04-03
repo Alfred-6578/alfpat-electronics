@@ -21,24 +21,26 @@ import paymentRoutes from "./src/routes/payment.routes.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
-connectDB();
-
 // Middleware
 app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
-// Webhook needs raw body for signature verification — must come BEFORE express.json()
+// Webhook needs raw body — must come BEFORE express.json()
 app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
 
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
-// Rate limiting for auth routes
+// Rate limiting
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 20,
   message: { message: "Too many requests, please try again after 15 minutes" },
 });
@@ -63,6 +65,15 @@ app.use("/api/payments", paymentRoutes);
 // Global error handler
 app.use(errorMiddleware);
 
-app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`);
+// Connect to DB THEN start server
+const start = async () => {
+  await connectDB();
+  app.listen(PORT, () => {
+    console.log(`Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`);
+  });
+};
+
+start().catch((err) => {
+  console.error("Failed to start server:", err.message);
+  process.exit(1);
 });

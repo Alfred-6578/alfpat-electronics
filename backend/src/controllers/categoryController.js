@@ -1,11 +1,25 @@
 import asyncHandler from "express-async-handler";
 import Category from "../models/Category.js";
+import Product from "../models/Product.js";
 
 // @desc    Get all categories
 // @route   GET /api/categories
 export const getAllCategories = asyncHandler(async (_req, res) => {
-  const categories = await Category.find().sort({ name: 1 });
-  res.json(categories);
+  const categories = await Category.find().sort({ name: 1 }).lean();
+
+  const counts = await Product.aggregate([
+    { $match: { isActive: true } },
+    { $group: { _id: "$category", count: { $sum: 1 } } },
+  ]);
+
+  const countMap = Object.fromEntries(counts.map((c) => [c._id.toString(), c.count]));
+
+  const result = categories.map((cat) => ({
+    ...cat,
+    productsCount: countMap[cat._id.toString()] || 0,
+  }));
+
+  res.json(result);
 });
 
 // @desc    Get single category by slug

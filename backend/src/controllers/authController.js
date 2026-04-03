@@ -49,6 +49,11 @@ export const login = asyncHandler(async (req, res) => {
     throw new Error("Invalid email or password");
   }
 
+  if (user.isSuspended) {
+    res.status(403);
+    throw new Error("Your account has been suspended. Contact support.");
+  }
+
   const token = generateToken(user._id);
 
   res.json({

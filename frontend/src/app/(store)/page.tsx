@@ -107,10 +107,10 @@ export default async function HomePage() {
                     <img
                       src={cat.image}
                       alt={cat.name}
-                      className="w-20 h-20 object-contain mb-3 group-hover:scale-105 transition-transform"
+                      className="w-full h-full object-cover mb-3 group-hover:scale-105 transition-transform"
                     />
                   ) : (
-                    <div className="w-20 h-20 rounded-xl bg-gray-200 flex items-center justify-center mb-3">
+                    <div className="w-full h-full rounded-xl bg-gray-200 flex items-center justify-center mb-3">
                       <span className="text-2xl font-bold text-gray-400">
                         {cat.name?.[0]}
                       </span>

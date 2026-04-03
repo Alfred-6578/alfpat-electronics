@@ -20,9 +20,24 @@ const productSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-productSchema.pre("save", function () {
+productSchema.pre("save", async function () {
   if (this.isModified("name")) {
-    this.slug = this.name.toLowerCase().replace(/\s+/g, "-");
+    let base = this.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    let slug = base;
+    let count = 0;
+    const Product = this.constructor;
+
+    // Check for existing slugs, skip self on update
+    while (await Product.findOne({ slug, _id: { $ne: this._id } })) {
+      count++;
+      slug = `${base}-${count}`;
+    }
+
+    this.slug = slug;
   }
 });
 

@@ -9,15 +9,8 @@ import { useCart } from "@/context/CartContext";
 import { initializePayment, fetchAddresses, addNewAddress, deleteAddress } from "@/lib/client-api";
 import { formatNaira } from "@/lib/formatCurrency";
 import type { CheckoutFormData, CheckoutFormErrors, SavedAddress } from "@/lib/types";
+import { NIGERIAN_STATES, NIGERIAN_CITIES } from "@/lib/nigerian-cities";
 import { AxiosError } from "axios";
-
-const NIGERIAN_STATES = [
-  "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
-  "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu",
-  "FCT (Abuja)", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina",
-  "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo",
-  "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara",
-];
 
 export default function CheckoutPage() {
   const { user, loading: authLoading } = useAuth();
@@ -396,24 +389,7 @@ export default function CheckoutPage() {
                 {errors.street && <p className="text-xs text-red-500 mt-1">{errors.street}</p>}
               </div>
 
-              {/* City */}
-              <div>
-                <label htmlFor="city" className="block text-sm font-medium text-[#0B1B3A] mb-1.5">
-                  City
-                </label>
-                <input
-                  id="city"
-                  type="text"
-                  required
-                  value={formData.city}
-                  onChange={(e) => updateField("city", e.target.value)}
-                  className={inputClass("city")}
-                  placeholder="Ikeja"
-                />
-                {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city}</p>}
-              </div>
-
-              {/* State */}
+              {/* State — must come before City so city depends on it */}
               <div>
                 <label htmlFor="state" className="block text-sm font-medium text-[#0B1B3A] mb-1.5">
                   State
@@ -422,7 +398,7 @@ export default function CheckoutPage() {
                   id="state"
                   required
                   value={formData.state}
-                  onChange={(e) => updateField("state", e.target.value)}
+                  onChange={(e) => { updateField("state", e.target.value); setFormData((prev) => ({ ...prev, city: "" })); }}
                   className={`${inputClass("state")} cursor-pointer ${!formData.state ? "text-gray-400" : ""}`}
                 >
                   <option value="">Select state</option>
@@ -431,6 +407,27 @@ export default function CheckoutPage() {
                   ))}
                 </select>
                 {errors.state && <p className="text-xs text-red-500 mt-1">{errors.state}</p>}
+              </div>
+
+              {/* City — depends on state */}
+              <div>
+                <label htmlFor="city" className="block text-sm font-medium text-[#0B1B3A] mb-1.5">
+                  City
+                </label>
+                <select
+                  id="city"
+                  required
+                  value={formData.city}
+                  onChange={(e) => updateField("city", e.target.value)}
+                  disabled={!formData.state}
+                  className={`${inputClass("city")} cursor-pointer ${!formData.city ? "text-gray-400" : ""} ${!formData.state ? "opacity-50 cursor-not-allowed" : ""}`}
+                >
+                  <option value="">{formData.state ? "Select city" : "Select state first"}</option>
+                  {formData.state && (NIGERIAN_CITIES[formData.state] || []).map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+                {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city}</p>}
               </div>
             </div>
 

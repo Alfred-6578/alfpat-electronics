@@ -21,6 +21,7 @@ export interface Category {
   slug: string;
   image?: string;
   description?: string;
+  productsCount?: number;
 }
 
 export interface CartItem {
@@ -52,7 +53,9 @@ export interface User {
   phone?: string;
   address?: Address;
   savedAddresses?: SavedAddress[];
+  googleId?: string;
   token?: string;
+  createdAt?: string;
 }
 
 export interface Address {
@@ -172,10 +175,37 @@ export interface PaymentStatusResponse {
   error?: string;
 }
 
+export interface Customer {
+  _id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  googleId?: string;
+  role: string;
+  isSuspended: boolean;
+  createdAt: string;
+  orderCount: number;
+  totalSpent: number;
+  lastOrder: string | null;
+}
+
+export interface CustomerDetail extends Customer {
+  orders: Order[];
+  savedAddresses?: SavedAddress[];
+}
+
+export interface LowStockProduct {
+  _id: string;
+  name: string;
+  stock: number;
+  images: string[];
+}
+
 export interface DashboardStats {
   totalProducts: number;
   totalOrders: number;
   totalRevenue: number;
   pendingOrders: number;
   recentOrders: Order[];
+  lowStockProducts: LowStockProduct[];
 }
