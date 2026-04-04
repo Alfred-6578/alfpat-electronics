@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { fetchProducts, fetchCategories } from "@/lib/client-api";
 import ProductGrid from "@/components/products/ProductGrid";
@@ -18,7 +18,7 @@ const SORT_LABELS: Record<SortOption, string> = {
   price_desc: "Price: High to Low",
 };
 
-export default function ProductsPage() {
+function ProductsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -373,5 +373,13 @@ export default function ProductsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense>
+      <ProductsPageInner />
+    </Suspense>
   );
 }

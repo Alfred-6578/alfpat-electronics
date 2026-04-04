@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
@@ -14,7 +14,7 @@ type PageStatus = "loading" | "success" | "timeout" | "failed" | "error" | "no_r
 
 const WHATSAPP = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || "";
 
-export default function VerifyPaymentPage() {
+function VerifyPaymentPageInner() {
   const { user, loading: authLoading } = useAuth();
   const { clearCart } = useCart();
   const router = useRouter();
@@ -483,5 +483,13 @@ export default function VerifyPaymentPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyPaymentPage() {
+  return (
+    <Suspense>
+      <VerifyPaymentPageInner />
+    </Suspense>
   );
 }
