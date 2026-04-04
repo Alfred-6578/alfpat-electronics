@@ -2,12 +2,12 @@
 
 import ProductCard from "./ProductCard";
 import { ProductCardSkeleton } from "@/components/ui/Skeleton";
+import EmptyState from "@/components/ui/EmptyState";
 import type { Product } from "@/lib/types";
 
 interface ProductGridProps {
   products: Product[];
   loading: boolean;
-  emptyMessage?: string;
   onClearFilters?: () => void;
   columns?: 3 | 4;
 }
@@ -20,7 +20,6 @@ const gridCols = {
 export default function ProductGrid({
   products,
   loading,
-  emptyMessage = "No products found",
   onClearFilters,
   columns = 4,
 }: ProductGridProps) {
@@ -36,33 +35,13 @@ export default function ProductGrid({
 
   if (products.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <svg
-          className="w-20 h-20 text-gray-200 mb-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={0.8}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-          />
-        </svg>
-        <p className="text-lg font-bold text-[#0B1B3A] mb-1">{emptyMessage}</p>
-        <p className="text-sm text-gray-400 mb-5">
-          Try adjusting your search or filters
-        </p>
-        {onClearFilters && (
-          <button
-            onClick={onClearFilters}
-            className="bg-[#F97316] hover:bg-[#EA6A0A] text-white text-sm font-semibold px-8 py-2.5 rounded-full transition-colors"
-          >
-            Clear Filters
-          </button>
-        )}
-      </div>
+      <EmptyState
+        icon={<svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>}
+        title="No products found"
+        subtitle="Try adjusting your search or filters"
+        actionLabel={onClearFilters ? "Clear Filters" : undefined}
+        onAction={onClearFilters}
+      />
     );
   }
 

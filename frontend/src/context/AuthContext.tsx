@@ -49,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data } = await api.post("/auth/login", { email, password });
     Cookies.set("alfpat_token", data.token, { expires: 7 });
     setUser(data);
+    window.dispatchEvent(new Event("alfpat_login"));
     return data;
   };
 
@@ -56,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data } = await api.post("/auth/register", { name, email, password });
     Cookies.set("alfpat_token", data.token, { expires: 7 });
     setUser(data);
+    window.dispatchEvent(new Event("alfpat_login"));
     return data;
   };
 
@@ -66,7 +68,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     Cookies.remove("alfpat_token");
+    localStorage.removeItem("alfpat_cart");
+    localStorage.removeItem("alfpat_wishlist");
     setUser(null);
+    window.dispatchEvent(new Event("alfpat_logout"));
   };
 
   return (

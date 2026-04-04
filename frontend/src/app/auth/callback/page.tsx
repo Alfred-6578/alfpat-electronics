@@ -26,6 +26,7 @@ export default function AuthCallbackPage() {
         Cookies.set("alfpat_token", token, { expires: 7 });
         const { data } = await api.get("/auth/me");
         setUser(data);
+        window.dispatchEvent(new Event("alfpat_login"));
         const redirect = searchParams.get("redirect") || "/";
         router.push(redirect);
       } catch {

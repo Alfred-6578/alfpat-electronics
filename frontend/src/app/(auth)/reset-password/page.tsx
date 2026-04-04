@@ -6,6 +6,7 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import api from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 import { AxiosError } from "axios";
 
 type PageState = "form" | "success" | "invalid";
@@ -49,6 +50,7 @@ export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
   const { setUser } = useAuth();
+  const { syncWithDB } = useCart();
 
   const [pageState, setPageState] = useState<PageState>(token ? "form" : "invalid");
   const [newPassword, setNewPassword] = useState("");
@@ -94,6 +96,7 @@ export default function ResetPasswordPage() {
       // Auto-login
       Cookies.set("alfpat_token", data.token, { expires: 7 });
       setUser(data.user);
+      await syncWithDB();
       setPageState("success");
     } catch (err) {
       const axiosErr = err as AxiosError<{ message: string; code?: string }>;

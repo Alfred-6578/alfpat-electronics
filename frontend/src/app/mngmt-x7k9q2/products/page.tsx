@@ -6,6 +6,7 @@ import { fetchAdminProducts, updateAdminProduct, fetchCategories } from "@/lib/c
 import { formatNaira } from "@/lib/formatCurrency";
 import Pagination from "@/components/ui/Pagination";
 import Badge from "@/components/ui/Badge";
+import EmptyState from "@/components/ui/EmptyState";
 import type { Product, Category } from "@/lib/types";
 
 const ADMIN_BASE = "/mngmt-x7k9q2";
@@ -137,12 +138,13 @@ export default function AdminProductsPage() {
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="py-16 text-center">
-            <svg className="w-16 h-16 text-gray-200 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            </svg>
-            <p className="text-sm text-gray-400">No products found</p>
-          </div>
+          <EmptyState
+            icon={<svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>}
+            title="No products found"
+            subtitle="Add your first product to start selling"
+            actionLabel="Add Product"
+            actionHref="/mngmt-x7k9q2/products/new"
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">

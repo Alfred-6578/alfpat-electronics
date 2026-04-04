@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 import { AxiosError } from "axios";
 
 export default function LoginPage() {
   const { user, login, loginWithGoogle } = useAuth();
+  const { syncWithDB } = useCart();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
@@ -29,6 +31,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(email, password);
+      await syncWithDB();
       router.push(redirect);
     } catch (err) {
       const axiosErr = err as AxiosError<{ message: string }>;

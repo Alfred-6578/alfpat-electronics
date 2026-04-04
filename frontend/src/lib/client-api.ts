@@ -14,6 +14,8 @@ import type {
   DashboardStats,
   Customer,
   CustomerDetail,
+  CartItem,
+  WishlistItem,
 } from "@/lib/types";
 
 export async function fetchCategories(): Promise<Category[]> {
@@ -81,6 +83,44 @@ export async function addNewAddress(address: Omit<SavedAddress, "_id">): Promise
 export async function deleteAddress(addressId: string): Promise<SavedAddress[]> {
   const { data } = await api.delete<SavedAddress[]>(`/users/addresses/${addressId}`);
   return data;
+}
+
+// Cart sync
+export async function fetchDBCart(): Promise<CartItem[]> {
+  const { data } = await api.get<CartItem[]>("/cart");
+  return data;
+}
+
+export async function saveDBCart(items: CartItem[]): Promise<void> {
+  await api.put("/cart", { items });
+}
+
+export async function mergeCart(localItems: CartItem[]): Promise<CartItem[]> {
+  const { data } = await api.post<CartItem[]>("/cart/merge", { localItems });
+  return data;
+}
+
+export async function clearDBCart(): Promise<void> {
+  await api.delete("/cart");
+}
+
+// Wishlist sync
+export async function fetchDBWishlist(): Promise<WishlistItem[]> {
+  const { data } = await api.get<WishlistItem[]>("/wishlist");
+  return data;
+}
+
+export async function saveDBWishlist(items: WishlistItem[]): Promise<void> {
+  await api.put("/wishlist", { items });
+}
+
+export async function mergeWishlist(localItems: WishlistItem[]): Promise<WishlistItem[]> {
+  const { data } = await api.post<WishlistItem[]>("/wishlist/merge", { localItems });
+  return data;
+}
+
+export async function clearDBWishlist(): Promise<void> {
+  await api.delete("/wishlist");
 }
 
 // Upload

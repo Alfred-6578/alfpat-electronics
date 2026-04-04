@@ -9,6 +9,7 @@ import {
   deleteCategory,
   uploadImage,
 } from "@/lib/client-api";
+import EmptyState from "@/components/ui/EmptyState";
 import type { Category } from "@/lib/types";
 
 export default function AdminCategoriesPage() {
@@ -144,12 +145,13 @@ export default function AdminCategoriesPage() {
           ))}
         </div>
       ) : categories.length === 0 ? (
-        <div className="py-20 text-center">
-          <svg className="w-16 h-16 text-gray-200 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
-          </svg>
-          <p className="text-sm text-gray-400">No categories yet</p>
-        </div>
+        <EmptyState
+          icon={<svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}><path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /></svg>}
+          title="No categories yet"
+          subtitle="Add categories to organise your products"
+          actionLabel="Add Category"
+          onAction={openAdd}
+        />
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
           {categories.map((cat) => (

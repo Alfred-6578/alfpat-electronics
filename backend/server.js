@@ -17,6 +17,7 @@ import adminRoutes from "./src/routes/admin.routes.js";
 import categoryRoutes from "./src/routes/category.routes.js";
 import uploadRoutes from "./src/routes/upload.routes.js";
 import paymentRoutes from "./src/routes/payment.routes.js";
+import cartRoutes from "./src/routes/cart.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -61,6 +62,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/cart", cartRoutes);
 
 // Global error handler
 app.use(errorMiddleware);

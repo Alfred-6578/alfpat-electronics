@@ -25,6 +25,12 @@ const userSchema = new mongoose.Schema({
   ],
   role: { type: String, enum: ["user", "admin"], default: "user" },
   isSuspended: { type: Boolean, default: false },
+  cart: [
+    {
+      product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+      qty: { type: Number, default: 1 },
+    },
+  ],
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   passwordResetToken: { type: String },
   passwordResetExpiry: { type: Date },

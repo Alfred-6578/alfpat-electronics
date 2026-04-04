@@ -8,6 +8,7 @@ import { fetchMyOrders } from "@/lib/client-api";
 import { formatNaira } from "@/lib/formatCurrency";
 import Pagination from "@/components/ui/Pagination";
 import Badge from "@/components/ui/Badge";
+import EmptyState from "@/components/ui/EmptyState";
 import type { Order } from "@/lib/types";
 
 const STATUS_BADGE: Record<string, { variant: "success" | "warning" | "info" | "error"; label: string }> = {
@@ -118,21 +119,13 @@ export default function OrdersPage() {
 
       {/* Empty */}
       {!loading && orders.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <svg className="w-20 h-20 text-gray-200 mb-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-          <h2 className="text-xl font-bold text-[#0B1B3A] mb-2">No orders yet</h2>
-          <p className="text-sm text-gray-400 mb-6">
-            When you place an order it will appear here
-          </p>
-          <Link
-            href="/products"
-            className="bg-[#F97316] hover:bg-[#EA6A0A] text-white font-semibold text-sm px-8 py-3 rounded-full transition-colors"
-          >
-            Start Shopping
-          </Link>
-        </div>
+        <EmptyState
+          icon={<svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>}
+          title="No orders yet"
+          subtitle="When you place an order it will appear here"
+          actionLabel="Start Shopping"
+          actionHref="/products"
+        />
       )}
 
       {/* Orders list */}
