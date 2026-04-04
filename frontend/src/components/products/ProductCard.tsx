@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { formatNaira } from "@/lib/formatCurrency";
 import type { Product, Category, CartItem } from "@/lib/types";
 
@@ -12,7 +13,9 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { items, addToCart, updateQuantity } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [added, setAdded] = useState(false);
+  const wishlisted = isInWishlist(product._id);
   const cartItem: CartItem | undefined = items.find((i) => i._id === product._id);
   const { name, slug, price, discountPrice, images, category, stock } = product;
   const image = images?.[0];
@@ -46,10 +49,14 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Wishlist — pointer-events-auto + z-20 to intercept above the link */}
         <button
-          onClick={() => {}}
-          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#0B1B3A] flex items-center justify-center text-white hover:bg-[#F97316] transition-colors z-20 pointer-events-auto"
+          onClick={() => toggleWishlist(product)}
+          className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-colors z-20 pointer-events-auto ${
+            wishlisted
+              ? "bg-red-500 text-white"
+              : "bg-[#0B1B3A] text-white hover:bg-[#F97316]"
+          }`}
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="w-4 h-4" fill={wishlisted ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           </svg>
         </button>

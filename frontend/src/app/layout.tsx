@@ -2,6 +2,7 @@ import { Outfit, Playfair_Display } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${outfit.className} min-h-screen flex flex-col antialiased`}>
         <AuthProvider>
           <CartProvider>
+          <WishlistProvider>
             {children}
             <Toaster
               position="top-center"
@@ -42,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 },
               }}
             />
+          </WishlistProvider>
           </CartProvider>
         </AuthProvider>
       </body>

@@ -5,11 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import CartDrawer from "@/components/cart/CartDrawer";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
   const router = useRouter();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -160,6 +162,19 @@ export default function Navbar() {
                       >
                         My Orders
                       </Link>
+                      <Link
+                        href="/wishlist"
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="block relative px-4 py-2 text-sm text-[#0B1B3A] hover:bg-[#F8F9FA] transition-colors"
+                      >
+                        Wishlist
+
+                        {wishlistCount > 0 && (
+                          <span className="absolute top-3 right-3 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                            {wishlistCount}
+                          </span>
+                        )}
+                      </Link>
                       {user.role === "admin" && (
                         <Link
                           href="/mngmt-x7k9q2"
@@ -281,6 +296,15 @@ export default function Navbar() {
                   className="block py-2 text-sm font-medium text-[#0B1B3A]"
                 >
                   My Orders
+                </Link>
+              )}
+              {user && (
+                <Link
+                  href="/wishlist"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block py-2 text-sm font-medium text-[#0B1B3A]"
+                >
+                  Wishlist
                 </Link>
               )}
 

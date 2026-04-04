@@ -24,6 +24,16 @@ export interface Category {
   productsCount?: number;
 }
 
+export interface WishlistItem {
+  _id: string;
+  name: string;
+  slug: string;
+  price: number;
+  discountPrice?: number;
+  image: string;
+  stock: number;
+}
+
 export interface CartItem {
   _id: string;
   name: string;
