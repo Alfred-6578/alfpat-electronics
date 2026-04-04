@@ -56,25 +56,33 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         Prev
       </button>
 
-      {getPages().map((page, i) =>
-        page === "..." ? (
-          <span key={`dots-${i}`} className="px-2 text-sm text-gray-400">
-            …
-          </span>
-        ) : (
-          <button
-            key={page}
-            onClick={() => onPageChange(page as number)}
-            className={`w-9 h-9 flex items-center justify-center text-sm font-medium rounded transition-colors ${
-              currentPage === page
-                ? "bg-[#F97316] text-white"
-                : "text-gray-500 border border-gray-200 hover:border-[#0B1B3A] hover:text-[#0B1B3A]"
-            }`}
-          >
-            {page}
-          </button>
-        )
-      )}
+      {/* Page indicator on mobile */}
+      <span className="sm:hidden text-sm font-medium text-gray-500">
+        {currentPage} / {totalPages}
+      </span>
+
+      {/* Page numbers on desktop */}
+      <div className="hidden sm:flex items-center gap-1.5">
+        {getPages().map((page, i) =>
+          page === "..." ? (
+            <span key={`dots-${i}`} className="px-2 text-sm text-gray-400">
+              …
+            </span>
+          ) : (
+            <button
+              key={page}
+              onClick={() => onPageChange(page as number)}
+              className={`w-10 h-10 flex items-center justify-center text-sm font-medium rounded transition-colors ${
+                currentPage === page
+                  ? "bg-[#F97316] text-white"
+                  : "text-gray-500 border border-gray-200 hover:border-[#0B1B3A] hover:text-[#0B1B3A]"
+              }`}
+            >
+              {page}
+            </button>
+          )
+        )}
+      </div>
 
       <button
         onClick={() => onPageChange(currentPage + 1)}

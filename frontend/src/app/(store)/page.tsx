@@ -1,11 +1,23 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import ProductGrid from "@/components/products/ProductGrid";
+import { ProductCardSkeleton } from "@/components/ui/Skeleton";
 import {
   getCategories,
   getFeaturedProducts,
   getLatestProducts,
 } from "@/lib/server-api";
 import type { Category } from "@/lib/types";
+
+function GridSkeleton() {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <ProductCardSkeleton key={i} />
+      ))}
+    </div>
+  );
+}
 
 export const metadata = {
   title: "ALFPAT ELECTRONICS — Quality Home Electronics in Nigeria",
@@ -45,7 +57,7 @@ export default async function HomePage() {
               </span>
 
               <h1
-                className="text-4xl lg:text-5xl xl:text-6xl font-bold text-[#0B1B3A] leading-tight mb-5"
+                className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-[#0B1B3A] leading-tight mb-5"
                 style={{ fontFamily: "var(--font-playfair)" }}
               >
                 Quality Electronics
@@ -190,7 +202,9 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <ProductGrid products={featuredProducts} loading={false} />
+            <Suspense fallback={<GridSkeleton />}>
+              <ProductGrid products={featuredProducts} loading={false} />
+            </Suspense>
           </div>
         </section>
       )}
@@ -237,7 +251,9 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <ProductGrid products={latestProducts} loading={false} />
+            <Suspense fallback={<GridSkeleton />}>
+              <ProductGrid products={latestProducts} loading={false} />
+            </Suspense>
           </div>
         </section>
       )}

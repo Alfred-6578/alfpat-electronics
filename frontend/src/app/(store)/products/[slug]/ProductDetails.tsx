@@ -84,12 +84,12 @@ export default function ProductDetails({
           </div>
 
           {product.images && product.images.length > 1 && (
-            <div className="flex gap-3">
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
               {product.images.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-colors ${
+                  className={`w-20 h-20 shrink-0 rounded-xl overflow-hidden border-2 transition-colors ${
                     selectedImage === i
                       ? "border-[#F97316]"
                       : "border-gray-200 hover:border-gray-300"

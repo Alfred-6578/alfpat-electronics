@@ -81,15 +81,15 @@ export default function Navbar() {
         <nav className="border-b border-gray-100">
           <div className="max-w-7xl mx-auto px-4 lg:px-6 py-3 flex items-center gap-6">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 shrink-0">
+            <Link href="/" className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               <span
-                className="text-2xl font-bold text-[#0B1B3A]"
+                className="text-xl sm:text-2xl font-bold text-[#0B1B3A]"
                 style={{ fontFamily: "var(--font-playfair)" }}
               >
                 ALFPAT
               </span>
-              <span className="w-px h-6 bg-[#F97316]" />
-              <span className="text-[10px] font-medium tracking-[0.25em] uppercase text-[#0B1B3A]">
+              <span className="w-px h-5 sm:h-6 bg-[#F97316]" />
+              <span className="text-[8px] sm:text-[10px] font-medium tracking-[0.2em] sm:tracking-[0.25em] uppercase text-[#0B1B3A]">
                 Electronics
               </span>
             </Link>
@@ -216,16 +216,16 @@ export default function Navbar() {
             </div>
 
             {/* Mobile right: cart + hamburger */}
-            <div className="flex lg:hidden items-center gap-3 ml-auto">
+            <div className="flex lg:hidden items-center gap-1 ml-auto">
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="relative p-1 text-[#0B1B3A]"
+                className="relative p-2.5 text-[#0B1B3A]"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#F97316] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute top-0.5 right-0.5 w-5 h-5 bg-[#F97316] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}
@@ -233,7 +233,7 @@ export default function Navbar() {
 
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-1 text-[#0B1B3A]"
+                className="p-2.5 text-[#0B1B3A]"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   {isMenuOpen ? (
@@ -278,14 +278,14 @@ export default function Navbar() {
               <Link
                 href="/"
                 onClick={() => setIsMenuOpen(false)}
-                className="block py-2 text-sm font-medium text-[#0B1B3A]"
+                className="block py-3 text-sm font-medium text-[#0B1B3A]"
               >
                 Home
               </Link>
               <Link
                 href="/products"
                 onClick={() => setIsMenuOpen(false)}
-                className="block py-2 text-sm font-medium text-[#0B1B3A]"
+                className="block py-3 text-sm font-medium text-[#0B1B3A]"
               >
                 Products
               </Link>
@@ -293,7 +293,7 @@ export default function Navbar() {
                 <Link
                   href="/orders"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block py-2 text-sm font-medium text-[#0B1B3A]"
+                  className="block py-3 text-sm font-medium text-[#0B1B3A]"
                 >
                   My Orders
                 </Link>
@@ -302,7 +302,7 @@ export default function Navbar() {
                 <Link
                   href="/wishlist"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block py-2 text-sm font-medium text-[#0B1B3A]"
+                  className="block py-3 text-sm font-medium text-[#0B1B3A]"
                 >
                   Wishlist
                 </Link>
