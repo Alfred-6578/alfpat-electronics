@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
@@ -23,7 +23,7 @@ const PAYMENT_BADGE: Record<string, { variant: "success" | "warning" | "error"; 
   failed: { variant: "error", label: "Payment Failed" },
 };
 
-export default function OrderDetailPage() {
+function OrderDetailPageInner() {
   const params = useParams();
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
@@ -327,5 +327,13 @@ export default function OrderDetailPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function OrderDetailPage() {
+  return (
+    <Suspense>
+      <OrderDetailPageInner />
+    </Suspense>
   );
 }
