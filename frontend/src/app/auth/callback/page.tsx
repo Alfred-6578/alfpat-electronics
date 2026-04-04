@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import api from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 
-export default function AuthCallbackPage() {
+function AuthCallbackPageInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { setUser } = useAuth();
@@ -76,5 +76,13 @@ export default function AuthCallbackPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense>
+      <AuthCallbackPageInner />
+    </Suspense>
   );
 }
